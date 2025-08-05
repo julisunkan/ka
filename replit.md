@@ -6,6 +6,11 @@ This is an Advanced Ethical Hacking Tutorials web application built with Flask. 
 
 Preferred communication style: Simple, everyday language.
 
+# Recent Changes
+
+- 2025-08-05: Successfully migrated project from Replit Agent to Replit environment
+- 2025-08-05: Removed Settings tab from bottom navigation across all templates and JavaScript files
+
 # System Architecture
 
 ## Frontend Architecture

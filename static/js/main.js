@@ -258,11 +258,7 @@ function initTouchGestures() {
     });
 }
 
-// Settings functionality
-window.showSettings = function() {
-    showToast('Settings coming soon');
-    // Future: Show settings modal
-};
+
 
 // Toast notifications
 window.showToast = function(message, duration = 2000) {
