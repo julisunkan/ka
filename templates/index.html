@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 text-gradient mb-4">
+                    <i class="fas fa-user-secret text-danger"></i>
+                    Advanced Ethical Hacking Methods
+                </h1>
+                <p class="lead text-light mb-4">
+                    Master advanced penetration testing techniques using Kali Linux with 
+                    interactive tutorials, step-by-step guides, and real-world examples.
+                </p>
+                
+                <!-- Warning Banner -->
+                <div class="alert alert-warning d-inline-block" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Legal Notice:</strong> Use these techniques only on systems you own or have explicit permission to test.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Categories -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="section-title text-center mb-4">
+                <i class="fas fa-book-open text-info"></i> Tutorial Categories
+            </h2>
+        </div>
+        
+        {% for tutorial in tutorials %}
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="tutorial-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="category-badge category-{{ tutorial.category.lower().replace(' ', '-') }}">
+                        {{ tutorial.category }}
+                    </span>
+                    <span class="difficulty-badge difficulty-{{ tutorial.difficulty.lower() }}">
+                        {{ tutorial.difficulty }}
+                    </span>
+                </div>
+                
+                <div class="card-body">
+                    <h3 class="card-title text-success">
+                        <i class="fas fa-terminal"></i>
+                        {{ tutorial.title }}
+                    </h3>
+                    <p class="card-text text-light">{{ tutorial.description }}</p>
+                    
+                    <div class="tutorial-meta mb-3">
+                        <span class="meta-item">
+                            <i class="fas fa-clock text-warning"></i>
+                            {{ tutorial.duration }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-tools text-info"></i>
+                            {{ tutorial.tools | length }} tools
+                        </span>
+                    </div>
+                    
+                    <div class="tools-list mb-3">
+                        {% for tool in tutorial.tools[:3] %}
+                        <span class="tool-badge">{{ tool }}</span>
+                        {% endfor %}
+                        {% if tutorial.tools | length > 3 %}
+                        <span class="tool-badge">+{{ tutorial.tools | length - 3 }} more</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <a href="{{ url_for('tutorial_detail', tutorial_id=tutorial.id) }}" 
+                       class="btn btn-primary btn-block">
+                        <i class="fas fa-play"></i>
+                        Start Tutorial
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Features Section -->
+    <div class="row features-section py-5">
+        <div class="col-12">
+            <h2 class="section-title text-center mb-5">
+                <i class="fas fa-star text-warning"></i> What You'll Learn
+            </h2>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-box text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-network-wired text-info"></i>
+                </div>
+                <h4 class="text-success">Network Security</h4>
+                <p class="text-light">
+                    Master advanced network reconnaissance, scanning techniques, 
+                    and vulnerability assessment methodologies.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-box text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-globe text-warning"></i>
+                </div>
+                <h4 class="text-success">Web Application Testing</h4>
+                <p class="text-light">
+                    Learn sophisticated web application penetration testing techniques 
+                    including advanced SQL injection and XSS attacks.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-box text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-wifi text-danger"></i>
+                </div>
+                <h4 class="text-success">Wireless Security</h4>
+                <p class="text-light">
+                    Explore wireless network security assessment techniques 
+                    and advanced WPA/WPA2 cracking methods.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-box text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-user-ninja text-success"></i>
+                </div>
+                <h4 class="text-success">Social Engineering</h4>
+                <p class="text-light">
+                    Understand psychological manipulation techniques and 
+                    learn to create effective security awareness programs.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-box text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-skull-crossbones text-danger"></i>
+                </div>
+                <h4 class="text-success">Post-Exploitation</h4>
+                <p class="text-light">
+                    Master advanced post-exploitation techniques, persistence methods, 
+                    and lateral movement strategies.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-box text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt text-info"></i>
+                </div>
+                <h4 class="text-success">Ethical Practices</h4>
+                <p class="text-light">
+                    Learn the legal and ethical aspects of penetration testing 
+                    and responsible disclosure practices.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

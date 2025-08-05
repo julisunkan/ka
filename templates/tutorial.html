@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tutorial.title }} - Advanced Ethical Hacking Tutorials{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Tutorial Header -->
+    <div class="tutorial-header py-4">
+        <div class="row">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('index') }}" class="text-success">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active text-light">{{ tutorial.title }}</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="display-5 text-gradient mb-3">
+                    <i class="fas fa-terminal text-success"></i>
+                    {{ tutorial.title }}
+                </h1>
+                
+                <p class="lead text-light mb-4">{{ tutorial.description }}</p>
+                
+                <div class="tutorial-meta-detailed">
+                    <span class="meta-badge category-{{ tutorial.category.lower().replace(' ', '-') }}">
+                        <i class="fas fa-folder"></i> {{ tutorial.category }}
+                    </span>
+                    <span class="meta-badge difficulty-{{ tutorial.difficulty.lower() }}">
+                        <i class="fas fa-chart-line"></i> {{ tutorial.difficulty }}
+                    </span>
+                    <span class="meta-badge duration">
+                        <i class="fas fa-clock"></i> {{ tutorial.duration }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="tutorial-tools-box">
+                    <h5 class="text-warning">
+                        <i class="fas fa-tools"></i> Required Tools
+                    </h5>
+                    <div class="tools-grid">
+                        {% for tool in tutorial.tools %}
+                        <span class="tool-badge-large">{{ tool }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Warning Banner -->
+        <div class="alert alert-danger mt-4" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Important Warning:</strong> {{ tutorial.warning }}
+        </div>
+    </div>
+
+    <!-- Tutorial Content -->
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="tutorial-content">
+                {% for step in tutorial.steps %}
+                <div class="tutorial-step mb-5" id="step-{{ loop.index }}">
+                    <div class="step-header">
+                        <h2 class="step-title">
+                            <span class="step-number">{{ loop.index }}</span>
+                            {{ step.title }}
+                        </h2>
+                    </div>
+                    
+                    <div class="step-content">
+                        <p class="text-light mb-4">{{ step.content }}</p>
+                        
+                        {% if step.code %}
+                        <div class="code-block-container">
+                            <div class="code-header">
+                                <span class="code-title">
+                                    <i class="fas fa-terminal"></i> Command Examples
+                                </span>
+                                <button class="btn btn-sm btn-outline-success copy-btn" 
+                                        onclick="copyCode('code-{{ loop.index }}')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <pre><code id="code-{{ loop.index }}" class="language-bash">{{ step.code }}</code></pre>
+                        </div>
+                        {% endif %}
+                        
+                        {% if step.explanation %}
+                        <div class="explanation-box">
+                            <h6 class="text-info">
+                                <i class="fas fa-lightbulb"></i> Explanation
+                            </h6>
+                            <p class="text-light mb-0">{{ step.explanation }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Navigation -->
+            <div class="tutorial-navigation mt-5">
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Tutorials
+                        </a>
+                    </div>
+                    <div class="col-6 text-end">
+                        <button class="btn btn-success" onclick="scrollToTop()">
+                            <i class="fas fa-arrow-up"></i> Back to Top
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="tutorial-sidebar sticky-top">
+                <div class="sidebar-section">
+                    <h5 class="text-warning">
+                        <i class="fas fa-list-ol"></i> Steps
+                    </h5>
+                    <ul class="step-navigation">
+                        {% for step in tutorial.steps %}
+                        <li>
+                            <a href="#step-{{ loop.index }}" class="text-light">
+                                <span class="step-nav-number">{{ loop.index }}</span>
+                                {{ step.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h5 class="text-info">
+                        <i class="fas fa-external-link-alt"></i> Quick Links
+                    </h5>
+                    <ul class="quick-links">
+                        <li>
+                            <a href="https://www.kali.org/tools/" target="_blank" class="text-success">
+                                <i class="fas fa-tools"></i> Kali Tools
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.offensive-security.com/" target="_blank" class="text-success">
+                                <i class="fas fa-graduation-cap"></i> OffSec Training
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.exploit-db.com/" target="_blank" class="text-success">
+                                <i class="fas fa-database"></i> Exploit Database
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

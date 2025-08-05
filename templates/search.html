@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Advanced Ethical Hacking Tutorials{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="search-header py-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-6 text-center text-gradient mb-4">
+                    <i class="fas fa-search text-info"></i>
+                    Search Results
+                </h1>
+                
+                <!-- Search Form -->
+                <form action="{{ url_for('search') }}" method="GET" class="mb-4">
+                    <div class="input-group input-group-lg">
+                        <input type="search" 
+                               name="q" 
+                               class="form-control bg-dark text-light border-success" 
+                               placeholder="Search tutorials, techniques, tools..."
+                               value="{{ query }}"
+                               autofocus>
+                        <button class="btn btn-success" type="submit">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+                
+                {% if query %}
+                <p class="text-center text-light">
+                    {% if results %}
+                        Found {{ results|length }} result(s) for "<span class="text-warning">{{ query }}</span>"
+                    {% else %}
+                        No results found for "<span class="text-warning">{{ query }}</span>"
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+    <div class="search-results">
+        <div class="row">
+            {% for tutorial in results %}
+            <div class="col-lg-6 mb-4">
+                <div class="search-result-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="category-badge category-{{ tutorial.category.lower().replace(' ', '-') }}">
+                            {{ tutorial.category }}
+                        </span>
+                        <span class="difficulty-badge difficulty-{{ tutorial.difficulty.lower() }}">
+                            {{ tutorial.difficulty }}
+                        </span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h3 class="card-title text-success">
+                            <i class="fas fa-terminal"></i>
+                            {{ tutorial.title }}
+                        </h3>
+                        <p class="card-text text-light">{{ tutorial.description }}</p>
+                        
+                        <div class="tutorial-meta mb-3">
+                            <span class="meta-item">
+                                <i class="fas fa-clock text-warning"></i>
+                                {{ tutorial.duration }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-tools text-info"></i>
+                                {{ tutorial.tools | length }} tools
+                            </span>
+                        </div>
+                        
+                        <div class="tools-list mb-3">
+                            {% for tool in tutorial.tools[:3] %}
+                            <span class="tool-badge">{{ tool }}</span>
+                            {% endfor %}
+                            {% if tutorial.tools | length > 3 %}
+                            <span class="tool-badge">+{{ tutorial.tools | length - 3 }} more</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Matching steps preview -->
+                        {% for step in tutorial.steps %}
+                            {% if query.lower() in step.get('content', '').lower() or query.lower() in step.get('title', '').lower() %}
+                                <div class="matching-step mt-3">
+                                    <h6 class="text-info">
+                                        <i class="fas fa-arrow-right"></i>
+                                        Step {{ loop.index }}: {{ step.title }}
+                                    </h6>
+                                    <p class="small text-muted">{{ step.content[:150] }}...</p>
+                                </div>
+                                {% if loop.index == 1 %}{% break %}{% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="card-footer">
+                        <a href="{{ url_for('tutorial_detail', tutorial_id=tutorial.id) }}" 
+                           class="btn btn-primary btn-block">
+                            <i class="fas fa-play"></i>
+                            View Tutorial
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif query %}
+    <div class="no-results text-center py-5">
+        <div class="no-results-icon">
+            <i class="fas fa-search text-muted"></i>
+        </div>
+        <h3 class="text-light mb-3">No tutorials found</h3>
+        <p class="text-muted mb-4">
+            Try searching for different keywords like "nmap", "sql injection", "wireless", etc.
+        </p>
+        
+        <div class="search-suggestions">
+            <h5 class="text-warning mb-3">Popular search terms:</h5>
+            <div class="suggestion-tags">
+                <a href="{{ url_for('search', q='nmap') }}" class="suggestion-tag">nmap</a>
+                <a href="{{ url_for('search', q='sql injection') }}" class="suggestion-tag">sql injection</a>
+                <a href="{{ url_for('search', q='wireless') }}" class="suggestion-tag">wireless</a>
+                <a href="{{ url_for('search', q='metasploit') }}" class="suggestion-tag">metasploit</a>
+                <a href="{{ url_for('search', q='social engineering') }}" class="suggestion-tag">social engineering</a>
+            </div>
+        </div>
+        
+        <a href="{{ url_for('index') }}" class="btn btn-success mt-4">
+            <i class="fas fa-home"></i>
+            Browse All Tutorials
+        </a>
+    </div>
+    {% else %}
+    <div class="search-help text-center py-5">
+        <div class="search-help-icon">
+            <i class="fas fa-question-circle text-info"></i>
+        </div>
+        <h3 class="text-light mb-3">Search our tutorials</h3>
+        <p class="text-muted mb-4">
+            Find specific techniques, tools, or methodologies in our comprehensive ethical hacking guide.
+        </p>
+        
+        <div class="search-examples">
+            <h5 class="text-warning mb-3">Try searching for:</h5>
+            <div class="example-searches">
+                <span class="example-search">"network reconnaissance"</span>
+                <span class="example-search">"burp suite"</span>
+                <span class="example-search">"privilege escalation"</span>
+                <span class="example-search">"WPA cracking"</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
