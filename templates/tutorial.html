@@ -1,190 +1,257 @@
 {% extends "base.html" %}
 
-{% block title %}{{ tutorial.title }} - Advanced Ethical Hacking Tutorials{% endblock %}
+{% block header_title %}{{ tutorial.title }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Tutorial Header -->
-    <div class="tutorial-header py-4">
-        <div class="row">
-            <div class="col-lg-8">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ url_for('index') }}" class="text-success">
-                                <i class="fas fa-home"></i> Home
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active text-light">{{ tutorial.title }}</li>
-                    </ol>
-                </nav>
-                
-                <h1 class="display-5 text-gradient mb-3">
-                    <i class="fas fa-terminal text-success"></i>
-                    {{ tutorial.title }}
-                </h1>
-                
-                <p class="lead text-light mb-4">{{ tutorial.description }}</p>
-                
-                <div class="tutorial-meta-detailed">
-                    <span class="meta-badge category-{{ tutorial.category.lower().replace(' ', '-') }}">
-                        <i class="fas fa-folder"></i> {{ tutorial.category }}
-                    </span>
-                    <span class="meta-badge difficulty-{{ tutorial.difficulty.lower() }}">
-                        <i class="fas fa-chart-line"></i> {{ tutorial.difficulty }}
-                    </span>
-                    <span class="meta-badge duration">
-                        <i class="fas fa-clock"></i> {{ tutorial.duration }}
-                    </span>
-                </div>
-            </div>
-            
-            <div class="col-lg-4">
-                <div class="tutorial-tools-box">
-                    <h5 class="text-warning">
-                        <i class="fas fa-tools"></i> Required Tools
-                    </h5>
-                    <div class="tools-grid">
-                        {% for tool in tutorial.tools %}
-                        <span class="tool-badge-large">{{ tool }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
+<!-- Tutorial Header -->
+<div class="mobile-section">
+    <div class="mobile-card">
+        <div class="tutorial-header">
+            <h3 class="tutorial-title">{{ tutorial.title }}</h3>
+            <div class="tutorial-meta">
+                <span class="difficulty-badge difficulty-{{ tutorial.difficulty.lower().replace(' ', '-') }}">
+                    {{ tutorial.difficulty }}
+                </span>
+                <span class="duration-badge">
+                    <i class="fas fa-clock"></i> {{ tutorial.duration }}
+                </span>
             </div>
         </div>
         
-        <!-- Warning Banner -->
-        <div class="alert alert-danger mt-4" role="alert">
-            <i class="fas fa-exclamation-triangle"></i>
-            <strong>Important Warning:</strong> {{ tutorial.warning }}
-        </div>
-    </div>
-
-    <!-- Tutorial Content -->
-    <div class="row">
-        <!-- Main Content -->
-        <div class="col-lg-9">
-            <div class="tutorial-content">
-                {% for step in tutorial.steps %}
-                <div class="tutorial-step mb-5" id="step-{{ loop.index }}">
-                    <div class="step-header">
-                        {% if step.module %}
-                        <div class="step-module-badge">
-                            <i class="fas fa-cube"></i>
-                            {% for module in tutorial.modules %}
-                                {% if module.id == step.module %}
-                                    {{ module.title.split(':')[0] }}
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                        <h2 class="step-title">
-                            <span class="step-number">{{ loop.index }}</span>
-                            {{ step.title }}
-                        </h2>
-                    </div>
-                    
-                    <div class="step-content">
-                        <p class="text-light mb-4">{{ step.content }}</p>
-                        
-                        {% if step.code %}
-                        <div class="code-block-container">
-                            <div class="code-header">
-                                <span class="code-title">
-                                    <i class="fas fa-terminal"></i> Command Examples
-                                </span>
-                                <button class="btn btn-sm btn-outline-success copy-btn" 
-                                        onclick="copyCode('code-{{ loop.index }}')">
-                                    <i class="fas fa-copy"></i> Copy
-                                </button>
-                            </div>
-                            <pre><code id="code-{{ loop.index }}" class="language-bash">{{ step.code }}</code></pre>
-                        </div>
-                        {% endif %}
-                        
-                        {% if step.explanation %}
-                        <div class="explanation-box">
-                            <h6 class="text-info">
-                                <i class="fas fa-lightbulb"></i> Explanation
-                            </h6>
-                            <p class="text-light mb-0">{{ step.explanation }}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Navigation -->
-            <div class="tutorial-navigation mt-5">
-                <div class="row">
-                    <div class="col-6">
-                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> Back to Tutorials
-                        </a>
-                    </div>
-                    <div class="col-6 text-end">
-                        <button class="btn btn-success" onclick="scrollToTop()">
-                            <i class="fas fa-arrow-up"></i> Back to Top
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <p class="tutorial-description">{{ tutorial.description }}</p>
         
-        <!-- Sidebar -->
-        <div class="col-lg-3">
-            <div class="tutorial-sidebar sticky-top">
-                {% if tutorial.modules %}
-                <div class="sidebar-section">
-                    <h5 class="text-info">
-                        <i class="fas fa-layer-group"></i> Modules
-                    </h5>
-                    <ul class="module-navigation">
-                        {% for module in tutorial.modules %}
-                        <li class="module-item">
-                            <div class="module-header">
-                                <i class="fas fa-cube text-success"></i>
-                                <strong>{{ module.title }}</strong>
-                            </div>
-                            <p class="module-description">{{ module.description }}</p>
-                            <ul class="module-steps">
-                                {% for step in tutorial.steps %}
-                                    {% if step.module == module.id %}
-                                    <li>
-                                        <a href="#step-{{ loop.index }}" class="text-light">
-                                            <span class="step-nav-number">{{ loop.index }}</span>
-                                            {{ step.title }}
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% else %}
-                <div class="sidebar-section">
-                    <h5 class="text-warning">
-                        <i class="fas fa-list-ol"></i> Steps
-                    </h5>
-                    <ul class="step-navigation">
-                        {% for step in tutorial.steps %}
-                        <li>
-                            <a href="#step-{{ loop.index }}" class="text-light">
-                                <span class="step-nav-number">{{ loop.index }}</span>
-                                {{ step.title }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-                
-
-            </div>
+        <div class="tutorial-tools">
+            {% for tool in tutorial.tools %}
+            <span class="tool-tag">{{ tool }}</span>
+            {% endfor %}
         </div>
     </div>
 </div>
+
+<!-- Warning Alert -->
+{% if tutorial.warning %}
+<div class="mobile-section">
+    <div class="mobile-alert">
+        <div class="alert-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="alert-content">
+            <div class="alert-title">Legal Warning</div>
+            <div class="alert-text">{{ tutorial.warning }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Module Navigation -->
+{% if tutorial.modules %}
+<div class="mobile-section">
+    <div class="module-nav">
+        <h4><i class="fas fa-list"></i> Learning Modules</h4>
+        <ul class="module-list">
+            {% for module in tutorial.modules %}
+            <li class="module-item">
+                <a href="#module-{{ module.id }}" class="module-link">
+                    <i class="fas fa-play-circle"></i>
+                    <span>{{ module.title }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- Tutorial Steps -->
+<div class="mobile-section">
+    {% for step in tutorial.steps %}
+    <div class="step-content" {% if tutorial.modules %}id="module-{{ step.module }}"{% endif %}>
+        <h3 class="step-title">
+            <i class="fas fa-terminal"></i> {{ step.title }}
+        </h3>
+        
+        <p class="step-description">{{ step.content }}</p>
+        
+        <!-- Code Block -->
+        {% if step.code %}
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-language">bash</span>
+                <button class="copy-btn" onclick="copyCode(this)">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            <div class="code-content">
+                <pre><code class="language-bash">{{ step.code }}</code></pre>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Explanation -->
+        {% if step.explanation %}
+        <div class="step-explanation">
+            <strong><i class="fas fa-lightbulb"></i> Understanding:</strong>
+            {{ step.explanation }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Navigation Footer -->
+<div class="mobile-section">
+    <div class="mobile-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="{{ url_for('index') }}" style="color: var(--accent-blue); text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Back to Tutorials
+            </a>
+            <button onclick="toggleBookmark()" style="background: none; border: none; color: var(--accent-orange); font-size: 1.2rem;">
+                <i class="fas fa-bookmark"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Copy code functionality
+function copyCode(button) {
+    const codeContent = button.closest('.code-container').querySelector('.code-content code');
+    const text = codeContent.textContent;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = 'var(--accent-green)';
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = 'var(--accent-blue)';
+        }, 2000);
+    }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = 'var(--accent-green)';
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = 'var(--accent-blue)';
+        }, 2000);
+    });
+}
+
+// Module navigation
+document.querySelectorAll('.module-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            // Remove active class from all links
+            document.querySelectorAll('.module-link').forEach(l => l.classList.remove('active'));
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Smooth scroll to target
+            targetElement.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Bookmark functionality
+function toggleBookmark() {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedTutorials') || '[]');
+    const currentTutorial = '{{ tutorial.id }}';
+    
+    if (bookmarks.includes(currentTutorial)) {
+        const index = bookmarks.indexOf(currentTutorial);
+        bookmarks.splice(index, 1);
+        showToast('Removed from bookmarks');
+    } else {
+        bookmarks.push(currentTutorial);
+        showToast('Added to bookmarks');
+    }
+    
+    localStorage.setItem('bookmarkedTutorials', JSON.stringify(bookmarks));
+}
+
+// Simple toast notification
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--tertiary-bg);
+        color: var(--text-primary);
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        z-index: 10000;
+        font-size: 0.9rem;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        document.body.removeChild(toast);
+    }, 2000);
+}
+
+// Intersection Observer for module navigation
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const moduleId = entry.target.id;
+            const correspondingLink = document.querySelector(`a[href="#${moduleId}"]`);
+            
+            if (correspondingLink) {
+                document.querySelectorAll('.module-link').forEach(l => l.classList.remove('active'));
+                correspondingLink.classList.add('active');
+            }
+        }
+    });
+}, {
+    threshold: 0.5,
+    rootMargin: '-80px 0px -80px 0px'
+});
+
+// Observe all step content elements
+document.querySelectorAll('.step-content[id]').forEach(el => {
+    observer.observe(el);
+});
+
+// Search functionality from header
+function toggleSearch() {
+    window.location.href = '{{ url_for("search") }}';
+}
+
+function toggleBookmarks() {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedTutorials') || '[]');
+    if (bookmarks.length === 0) {
+        showToast('No bookmarks yet');
+    } else {
+        showToast(`${bookmarks.length} bookmarked tutorials`);
+    }
+}
+
+function showSettings() {
+    showToast('Settings coming soon');
+}
+</script>
 {% endblock %}

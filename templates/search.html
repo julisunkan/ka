@@ -1,160 +1,267 @@
 {% extends "base.html" %}
 
-{% block title %}Search Results - Advanced Ethical Hacking Tutorials{% endblock %}
+{% block header_title %}Search Tutorials{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="search-header py-4">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <h1 class="display-6 text-center text-gradient mb-4">
-                    <i class="fas fa-search text-info"></i>
-                    Search Results
-                </h1>
-                
-                <!-- Search Form -->
-                <form action="{{ url_for('search') }}" method="GET" class="mb-4">
-                    <div class="input-group input-group-lg">
-                        <input type="search" 
-                               name="q" 
-                               class="form-control bg-dark text-light border-success" 
-                               placeholder="Search tutorials, techniques, tools..."
-                               value="{{ query }}"
-                               autofocus>
-                        <button class="btn btn-success" type="submit">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                    </div>
-                </form>
-                
-                {% if query %}
-                <p class="text-center text-light">
-                    {% if results %}
-                        Found {{ results|length }} result(s) for "<span class="text-warning">{{ query }}</span>"
-                    {% else %}
-                        No results found for "<span class="text-warning">{{ query }}</span>"
-                    {% endif %}
-                </p>
-                {% endif %}
+<!-- Search Section -->
+<div class="mobile-search">
+    <form action="{{ url_for('search') }}" method="GET">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" 
+                   name="q" 
+                   class="search-input" 
+                   placeholder="Search tutorials, tools, techniques..." 
+                   value="{{ request.args.get('q', '') }}"
+                   autofocus>
+        </div>
+    </form>
+</div>
+
+{% if request.args.get('q') %}
+<!-- Search Results -->
+<div class="mobile-section">
+    <div class="mobile-card">
+        <h3><i class="fas fa-search-plus"></i> Search Results</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Found {{ results|length }} result(s) for "{{ request.args.get('q') }}"
+        </p>
+    </div>
+</div>
+
+{% if results %}
+<div class="mobile-section">
+    {% for tutorial in results %}
+    <a href="{{ url_for('tutorial_detail', tutorial_id=tutorial.id) }}" class="tutorial-card">
+        <div class="tutorial-header">
+            <h3 class="tutorial-title">{{ tutorial.title }}</h3>
+            <div class="tutorial-meta">
+                <span class="difficulty-badge difficulty-{{ tutorial.difficulty.lower().replace(' ', '-') }}">
+                    {{ tutorial.difficulty }}
+                </span>
+                <span class="duration-badge">
+                    <i class="fas fa-clock"></i> {{ tutorial.duration }}
+                </span>
             </div>
         </div>
-    </div>
-
-    {% if results %}
-    <div class="search-results">
-        <div class="row">
-            {% for tutorial in results %}
-            <div class="col-lg-6 mb-4">
-                <div class="search-result-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="category-badge category-{{ tutorial.category.lower().replace(' ', '-') }}">
-                            {{ tutorial.category }}
-                        </span>
-                        <span class="difficulty-badge difficulty-{{ tutorial.difficulty.lower() }}">
-                            {{ tutorial.difficulty }}
-                        </span>
-                    </div>
-                    
-                    <div class="card-body">
-                        <h3 class="card-title text-success">
-                            <i class="fas fa-terminal"></i>
-                            {{ tutorial.title }}
-                        </h3>
-                        <p class="card-text text-light">{{ tutorial.description }}</p>
-                        
-                        <div class="tutorial-meta mb-3">
-                            <span class="meta-item">
-                                <i class="fas fa-clock text-warning"></i>
-                                {{ tutorial.duration }}
-                            </span>
-                            <span class="meta-item">
-                                <i class="fas fa-tools text-info"></i>
-                                {{ tutorial.tools | length }} tools
-                            </span>
-                        </div>
-                        
-                        <div class="tools-list mb-3">
-                            {% for tool in tutorial.tools[:3] %}
-                            <span class="tool-badge">{{ tool }}</span>
-                            {% endfor %}
-                            {% if tutorial.tools | length > 3 %}
-                            <span class="tool-badge">+{{ tutorial.tools | length - 3 }} more</span>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Matching steps preview -->
-                        {% for step in tutorial.steps %}
-                            {% if query.lower() in step.get('content', '').lower() or query.lower() in step.get('title', '').lower() %}
-                                <div class="matching-step mt-3">
-                                    <h6 class="text-info">
-                                        <i class="fas fa-arrow-right"></i>
-                                        Step {{ loop.index }}: {{ step.title }}
-                                    </h6>
-                                    <p class="small text-muted">{{ step.content[:150] }}...</p>
-                                </div>
-                                {% if loop.index == 1 %}{% break %}{% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    
-                    <div class="card-footer">
-                        <a href="{{ url_for('tutorial_detail', tutorial_id=tutorial.id) }}" 
-                           class="btn btn-primary btn-block">
-                            <i class="fas fa-play"></i>
-                            View Tutorial
-                        </a>
-                    </div>
-                </div>
-            </div>
+        
+        <p class="tutorial-description">{{ tutorial.description }}</p>
+        
+        <div class="tutorial-tools">
+            {% for tool in tutorial.tools %}
+            <span class="tool-tag">{{ tool }}</span>
             {% endfor %}
         </div>
-    </div>
-    {% elif query %}
-    <div class="no-results text-center py-5">
-        <div class="no-results-icon">
-            <i class="fas fa-search text-muted"></i>
-        </div>
-        <h3 class="text-light mb-3">No tutorials found</h3>
-        <p class="text-muted mb-4">
-            Try searching for different keywords like "nmap", "sql injection", "wireless", etc.
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<!-- No Results -->
+<div class="mobile-section">
+    <div class="mobile-card" style="text-align: center; padding: 40px 16px;">
+        <i class="fas fa-search" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 16px;"></i>
+        <h3 style="color: var(--text-secondary);">No results found</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Try searching for different keywords or browse all tutorials.
         </p>
-        
-        <div class="search-suggestions">
-            <h5 class="text-warning mb-3">Popular search terms:</h5>
-            <div class="suggestion-tags">
-                <a href="{{ url_for('search', q='nmap') }}" class="suggestion-tag">nmap</a>
-                <a href="{{ url_for('search', q='sql injection') }}" class="suggestion-tag">sql injection</a>
-                <a href="{{ url_for('search', q='wireless') }}" class="suggestion-tag">wireless</a>
-                <a href="{{ url_for('search', q='metasploit') }}" class="suggestion-tag">metasploit</a>
-                <a href="{{ url_for('search', q='social engineering') }}" class="suggestion-tag">social engineering</a>
-            </div>
-        </div>
-        
-        <a href="{{ url_for('index') }}" class="btn btn-success mt-4">
-            <i class="fas fa-home"></i>
-            Browse All Tutorials
+        <a href="{{ url_for('index') }}" style="color: var(--accent-blue); text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Tutorials
         </a>
     </div>
-    {% else %}
-    <div class="search-help text-center py-5">
-        <div class="search-help-icon">
-            <i class="fas fa-question-circle text-info"></i>
-        </div>
-        <h3 class="text-light mb-3">Search our tutorials</h3>
-        <p class="text-muted mb-4">
-            Find specific techniques, tools, or methodologies in our comprehensive ethical hacking guide.
-        </p>
-        
-        <div class="search-examples">
-            <h5 class="text-warning mb-3">Try searching for:</h5>
-            <div class="example-searches">
-                <span class="example-search">"network reconnaissance"</span>
-                <span class="example-search">"burp suite"</span>
-                <span class="example-search">"privilege escalation"</span>
-                <span class="example-search">"WPA cracking"</span>
-            </div>
+</div>
+{% endif %}
+
+{% else %}
+<!-- Search Suggestions -->
+<div class="mobile-section">
+    <div class="mobile-card">
+        <h3><i class="fas fa-lightbulb"></i> Popular Searches</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+            <button class="tool-tag" onclick="searchFor('nmap')">nmap</button>
+            <button class="tool-tag" onclick="searchFor('sql injection')">sql injection</button>
+            <button class="tool-tag" onclick="searchFor('wireless')">wireless</button>
+            <button class="tool-tag" onclick="searchFor('reconnaissance')">reconnaissance</button>
+            <button class="tool-tag" onclick="searchFor('web application')">web application</button>
+            <button class="tool-tag" onclick="searchFor('vulnerability')">vulnerability</button>
         </div>
     </div>
-    {% endif %}
 </div>
+
+<!-- Search Categories -->
+<div class="mobile-section">
+    <div class="mobile-card">
+        <h3><i class="fas fa-layer-group"></i> Browse by Category</h3>
+        <div style="margin-top: 12px;">
+            <button class="tutorial-card" onclick="searchFor('Network Security')" style="margin-bottom: 8px; border: none; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-network-wired" style="color: var(--accent-blue); font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);">Network Security</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Reconnaissance, scanning, enumeration</div>
+                    </div>
+                </div>
+            </button>
+            
+            <button class="tutorial-card" onclick="searchFor('Web Security')" style="margin-bottom: 8px; border: none; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-globe" style="color: var(--accent-green); font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);">Web Security</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">SQL injection, XSS, authentication</div>
+                    </div>
+                </div>
+            </button>
+            
+            <button class="tutorial-card" onclick="searchFor('Wireless')" style="margin-bottom: 8px; border: none; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-wifi" style="color: var(--accent-orange); font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);">Wireless Security</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">WiFi hacking, WPA/WPA2 cracking</div>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Searches -->
+<div class="mobile-section">
+    <div class="mobile-card">
+        <h3><i class="fas fa-history"></i> Recent Searches</h3>
+        <div id="recent-searches" style="margin-top: 12px;">
+            <p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">
+                Your recent searches will appear here
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Search functionality
+function searchFor(query) {
+    const searchInput = document.querySelector('input[name="q"]');
+    searchInput.value = query;
+    
+    // Add to recent searches
+    addToRecentSearches(query);
+    
+    // Submit the form
+    searchInput.closest('form').submit();
+}
+
+// Recent searches functionality
+function addToRecentSearches(query) {
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    
+    // Remove if already exists
+    recentSearches = recentSearches.filter(search => search !== query);
+    
+    // Add to beginning
+    recentSearches.unshift(query);
+    
+    // Keep only last 5 searches
+    recentSearches = recentSearches.slice(0, 5);
+    
+    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    displayRecentSearches();
+}
+
+function displayRecentSearches() {
+    const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    const container = document.getElementById('recent-searches');
+    
+    if (recentSearches.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">Your recent searches will appear here</p>';
+        return;
+    }
+    
+    container.innerHTML = recentSearches.map(search => 
+        `<button class="tool-tag" onclick="searchFor('${search}')" style="margin: 4px; cursor: pointer; border: none;">${search}</button>`
+    ).join('');
+}
+
+// Clear recent searches
+function clearRecentSearches() {
+    localStorage.removeItem('recentSearches');
+    displayRecentSearches();
+}
+
+// Load recent searches on page load
+document.addEventListener('DOMContentLoaded', function() {
+    displayRecentSearches();
+    
+    // Save search query when form is submitted
+    const searchForm = document.querySelector('form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function() {
+            const query = this.querySelector('input[name="q"]').value.trim();
+            if (query) {
+                addToRecentSearches(query);
+            }
+        });
+    }
+});
+
+// Search suggestions based on input
+const searchInput = document.querySelector('input[name="q"]');
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        // This could be expanded to show live suggestions
+    });
+}
+
+// Mobile specific search behavior
+function toggleSearch() {
+    // Focus on search input
+    const searchInput = document.querySelector('input[name="q"]');
+    if (searchInput) {
+        searchInput.focus();
+    }
+}
+
+function toggleBookmarks() {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedTutorials') || '[]');
+    if (bookmarks.length === 0) {
+        showToast('No bookmarks yet');
+    } else {
+        // Filter tutorials by bookmarked IDs
+        const query = bookmarks.join(' OR ');
+        searchFor(query);
+    }
+}
+
+function showSettings() {
+    showToast('Settings coming soon');
+}
+
+// Simple toast notification
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--tertiary-bg);
+        color: var(--text-primary);
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        z-index: 10000;
+        font-size: 0.9rem;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        document.body.removeChild(toast);
+    }, 2000);
+}
+</script>
 {% endblock %}

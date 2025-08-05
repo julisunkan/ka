@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Advanced Ethical Hacking Tutorials - Kali Linux Guide{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>{% block title %}Ethical Hacking Tutorials{% endblock %}</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#161b22">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hacking Tutorials">
     
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Prism.js for syntax highlighting -->
@@ -18,88 +21,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand terminal-font" href="{{ url_for('index') }}">
-                <i class="fas fa-terminal text-success"></i>
-                <span class="text-danger">Kali</span><span class="text-success">Hacking</span><span class="text-warning">Tutorials</span>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        {% if request.endpoint != 'index' %}
+            <button class="mobile-back-btn" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i>
             </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                </ul>
-                
-                <!-- Search Form -->
-                <form class="d-flex" action="{{ url_for('search') }}" method="GET">
-                    <input class="form-control me-2 bg-dark text-light border-success" 
-                           type="search" 
-                           name="q" 
-                           placeholder="Search tutorials..." 
-                           value="{{ request.args.get('q', '') }}">
-                    <button class="btn btn-outline-success" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        {% if error %}
-        <div class="container mt-4">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle"></i>
-                {{ error }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </div>
+        {% else %}
+            <div style="width: 40px;"></div>
         {% endif %}
         
+        <h1>{% block header_title %}Hacking Tutorials{% endblock %}</h1>
+        
+        <button class="mobile-menu-btn" onclick="toggleSearch()">
+            <i class="fas fa-search"></i>
+        </button>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="mobile-container">
         {% block content %}{% endblock %}
-    </main>
+    </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 class="text-warning">
-                        <i class="fas fa-shield-alt"></i> Ethical Hacking Disclaimer
-                    </h5>
-                    <p class="small">
-                        These tutorials are for educational purposes only. Always obtain proper authorization 
-                        before testing any security techniques. Use responsibly and legally.
-                    </p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <h5 class="text-info">
-                        <i class="fas fa-tools"></i> Powered by Kali Linux
-                    </h5>
-                    <p class="small">
-                        Advanced penetration testing and ethical hacking tutorials using industry-standard tools.
-                    </p>
-                </div>
-            </div>
-            <hr class="border-secondary">
-            <div class="text-center">
-                <p class="mb-0">&copy; 2025 Advanced Ethical Hacking Tutorials. For educational use only.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <div class="nav-label">Home</div>
+        </a>
+        <a href="{{ url_for('search') }}" class="nav-item {% if request.endpoint == 'search' %}active{% endif %}">
+            <div class="nav-icon"><i class="fas fa-search"></i></div>
+            <div class="nav-label">Search</div>
+        </a>
+        <a href="#" class="nav-item" onclick="toggleBookmarks()">
+            <div class="nav-icon"><i class="fas fa-bookmark"></i></div>
+            <div class="nav-label">Saved</div>
+        </a>
+        <a href="#" class="nav-item" onclick="showSettings()">
+            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+            <div class="nav-label">Settings</div>
+        </a>
+    </nav>
     
     <!-- Prism.js for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
@@ -107,5 +69,7 @@
     
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
 </body>
 </html>
