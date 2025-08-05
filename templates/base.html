@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>{% block title %}Ethical Hacking Tutorials{% endblock %}</title>
+    <title>{% block title %}Advanced Ethical Hacking Methods Using Kali Linux – A Practical Guide{% endblock %}</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#161b22">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Hacking Tutorials">
+    <meta name="apple-mobile-web-app-title" content="Kali Linux Hacking Guide">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,14 +24,14 @@
     <!-- Mobile Header -->
     <header class="mobile-header">
         {% if request.endpoint != 'index' %}
-            <button class="mobile-back-btn" onclick="history.back()">
-                <i class="fas fa-arrow-left"></i>
-            </button>
+            <a href="{{ url_for('index') }}" class="mobile-back-btn">
+                <i class="fas fa-home"></i>
+            </a>
         {% else %}
             <div style="width: 40px;"></div>
         {% endif %}
         
-        <h1>{% block header_title %}Hacking Tutorials{% endblock %}</h1>
+        <h1>{% block header_title %}Advanced Ethical Hacking Methods Using Kali Linux – A Practical Guide{% endblock %}</h1>
         
         <button class="mobile-menu-btn" onclick="toggleSearch()">
             <i class="fas fa-search"></i>
