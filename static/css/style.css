@@ -1,20 +1,20 @@
-/* Mobile Tutorial App - Dark Theme */
+/* Mobile Tutorial App - Light Theme */
 :root {
-    --primary-bg: #0d1117;
-    --secondary-bg: #161b22;
-    --tertiary-bg: #21262d;
-    --border-color: #30363d;
-    --text-primary: #f0f6fc;
-    --text-secondary: #8b949e;
-    --accent-green: #238636;
-    --accent-blue: #1f6feb;
-    --accent-red: #da3633;
-    --accent-orange: #fb8500;
-    --accent-purple: #8b5cf6;
-    --danger-bg: #ff6b6b;
-    --warning-bg: #ffd93d;
-    --success-bg: #6bcf7f;
-    --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --primary-bg: #ffffff;
+    --secondary-bg: #f8f9fa;
+    --tertiary-bg: #ffffff;
+    --border-color: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --accent-green: #198754;
+    --accent-blue: #0d6efd;
+    --accent-red: #dc3545;
+    --accent-orange: #fd7e14;
+    --accent-purple: #6f42c1;
+    --danger-bg: #f8d7da;
+    --warning-bg: #fff3cd;
+    --success-bg: #d1e7dd;
+    --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     --border-radius: 16px;
     --mobile-padding: 16px;
     --mobile-margin: 12px;
@@ -62,7 +62,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .mobile-header h1 {
@@ -115,7 +115,7 @@ body {
 
 .mobile-card:active {
     transform: translateY(2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .mobile-card h3 {
@@ -165,7 +165,7 @@ body {
 
 .tutorial-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     text-decoration: none;
     color: inherit;
 }
@@ -202,10 +202,10 @@ body {
     letter-spacing: 0.5px;
 }
 
-.difficulty-beginner { background: var(--success-bg); color: white; }
-.difficulty-intermediate { background: var(--warning-bg); color: black; }
+.difficulty-beginner { background: var(--success-bg); color: var(--accent-green); }
+.difficulty-intermediate { background: var(--warning-bg); color: var(--accent-orange); }
 .difficulty-advanced { background: var(--accent-orange); color: white; }
-.difficulty-expert { background: var(--danger-bg); color: white; }
+.difficulty-expert { background: var(--accent-red); color: white; }
 
 .duration-badge {
     font-size: 0.75rem;
@@ -382,13 +382,14 @@ body {
 /* Warning Alerts */
 .mobile-alert {
     background: var(--danger-bg);
-    color: white;
+    color: var(--accent-red);
     padding: var(--mobile-padding);
     border-radius: var(--border-radius);
     margin-bottom: var(--mobile-margin);
     display: flex;
     align-items: flex-start;
     gap: 12px;
+    border: 1px solid var(--accent-red);
 }
 
 .alert-icon {
