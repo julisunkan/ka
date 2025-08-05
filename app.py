@@ -12,5 +12,5 @@ app.secret_key = os.environ.get("SESSION_SECRET")
 # Import routes after app creation to avoid circular imports
 from routes import *
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# This file is imported by main.py for gunicorn
+# Direct execution is handled by main.py

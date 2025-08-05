@@ -10,6 +10,10 @@ Preferred communication style: Simple, everyday language.
 
 - 2025-08-05: Successfully migrated project from Replit Agent to Replit environment
 - 2025-08-05: Removed Settings tab from bottom navigation across all templates and JavaScript files
+- 2025-08-05: Updated theme from dark to light with green-red gradient background
+- 2025-08-05: Changed title to "Advanced Ethical Hacking Methods Using Kali Linux – A Practical Guide"
+- 2025-08-05: Enhanced navigation with home icon in header and improved mobile responsiveness
+- 2025-08-05: Fixed LSP diagnostics and verified all routes are working correctly
 
 # System Architecture
 
