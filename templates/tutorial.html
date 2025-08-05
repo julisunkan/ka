@@ -68,6 +68,16 @@
                 {% for step in tutorial.steps %}
                 <div class="tutorial-step mb-5" id="step-{{ loop.index }}">
                     <div class="step-header">
+                        {% if step.module %}
+                        <div class="step-module-badge">
+                            <i class="fas fa-cube"></i>
+                            {% for module in tutorial.modules %}
+                                {% if module.id == step.module %}
+                                    {{ module.title.split(':')[0] }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                         <h2 class="step-title">
                             <span class="step-number">{{ loop.index }}</span>
                             {{ step.title }}
@@ -125,6 +135,36 @@
         <!-- Sidebar -->
         <div class="col-lg-3">
             <div class="tutorial-sidebar sticky-top">
+                {% if tutorial.modules %}
+                <div class="sidebar-section">
+                    <h5 class="text-info">
+                        <i class="fas fa-layer-group"></i> Modules
+                    </h5>
+                    <ul class="module-navigation">
+                        {% for module in tutorial.modules %}
+                        <li class="module-item">
+                            <div class="module-header">
+                                <i class="fas fa-cube text-success"></i>
+                                <strong>{{ module.title }}</strong>
+                            </div>
+                            <p class="module-description">{{ module.description }}</p>
+                            <ul class="module-steps">
+                                {% for step in tutorial.steps %}
+                                    {% if step.module == module.id %}
+                                    <li>
+                                        <a href="#step-{{ loop.index }}" class="text-light">
+                                            <span class="step-nav-number">{{ loop.index }}</span>
+                                            {{ step.title }}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
                 <div class="sidebar-section">
                     <h5 class="text-warning">
                         <i class="fas fa-list-ol"></i> Steps
@@ -140,6 +180,7 @@
                         {% endfor %}
                     </ul>
                 </div>
+                {% endif %}
                 
 
             </div>

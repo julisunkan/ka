@@ -245,6 +245,20 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.step-module-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--success-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
 .step-title {
     display: flex;
     align-items: center;
@@ -329,6 +343,46 @@ pre code {
     border-radius: 10px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
+}
+
+/* Module Navigation */
+.module-navigation {
+    list-style: none;
+    padding: 0;
+}
+
+.module-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(88, 166, 255, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid var(--info-color);
+}
+
+.module-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--info-color);
+    font-size: 0.9rem;
+}
+
+.module-description {
+    font-size: 0.8rem;
+    color: #a0a9ba;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.module-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.module-steps li {
+    margin-bottom: 0.5rem;
 }
 
 .step-navigation {

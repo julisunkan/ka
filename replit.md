@@ -29,10 +29,12 @@ Preferred communication style: Simple, everyday language.
 - **Search Implementation**: In-memory search across tutorial titles, descriptions, and content using string matching
 
 ## Application Features
-- **Tutorial System**: Hierarchical tutorial structure with categories, difficulty levels, and duration estimates
+- **Modular Tutorial System**: Hierarchical tutorial structure with interconnected modules, categories, difficulty levels, and duration estimates
+- **Module-Based Learning**: Each tutorial contains multiple linked modules with specific learning objectives and progressive skill building
 - **Search Functionality**: Full-text search across all tutorial content with query highlighting
 - **Responsive Design**: Mobile-first design approach with Bootstrap grid system
 - **Code Examples**: Syntax-highlighted code blocks with copy functionality for security tools and commands
+- **Interactive Navigation**: Module-aware sidebar navigation with step grouping by learning modules
 - **Safety Warnings**: Prominent legal and ethical disclaimers throughout the application
 
 # External Dependencies
